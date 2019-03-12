@@ -5,21 +5,26 @@
 #include <iostream>
 #include "DAGNode.h"
 
-
+/*
+ * Constructor
+ */
 DAGNode::DAGNode(size_t id, Node n) {
     this->id = id;
+    childmask = 0;
     for(unsigned j=0; j<8; j++){
-        childmask[j] = n.hasChild(j);
-        if(childmask[j]){
+        childmask = (childmask << 1) + n.hasChild(j);
+        if(n.hasChild(j)){
             children.push_back(n.getChildPos(j));
         }
     }
-    key = getChildmask();
 }
 
+/*
+ * Overloading '<' and '=='
+ */
 bool DAGNode::operator< (const DAGNode &n) const {
-    if(key!=n.key)
-        return key < n.key;
+    if(childmask!=n.childmask)
+        return childmask < n.childmask;
     for(int j=0; j<children.size(); j++){
         if(children[j]!=n.children[j])
             return children[j] < n.children[j];
@@ -28,7 +33,7 @@ bool DAGNode::operator< (const DAGNode &n) const {
 }
 
 bool DAGNode::operator==(const DAGNode &n) const {
-    if(getChildmask()!=n.getChildmask())
+    if(childmask!=n.childmask)
         return false;
     for(int j=0; j<children.size(); j++){
         if(children[j]!=n.children[j])
@@ -37,35 +42,16 @@ bool DAGNode::operator==(const DAGNode &n) const {
     return true;
 }
 
-size_t DAGNode::getChildmask() const {
-    int s=0;
-    for(int j=0; j<8; j++){
-        s = (s << 1) + childmask[j];
-    }
-    return s;
-}
-
-bool DAGNode::hasChild(unsigned int i) const {
-    return childmask[i];
-}
-
-size_t DAGNode::getChildPos(unsigned int i) const {
-    for(int j=0; j<8; j++){
-        if(childmask[j])
-            i--;
-        if(i<0)
-            return children[j];
-    }
-}
-
 bool DAGNode::isLeaf() const {
     return children.empty();
 }
 
 void DAGNode::print(){
-    string s = "DAGNode " + std::to_string(id) + " - childmask: " + std::to_string(getChildmask()) + " (";
-    for(int j=0; j<8; j++){
-        s += std::to_string(childmask[j]);
+    string s = "DAGNode " + std::to_string(id) + " - childmask: " + std::to_string(childmask) + " (";
+    int a = childmask;
+    for(int j=7; j>=0; j--){
+        s+= a % int(pow(2, j)) == a ? "0" : "1";
+        a = a % int(pow(2, j));
     }
     s += "); ";
     s += "children: ";
@@ -80,7 +66,7 @@ void DAGNode::print(){
 }
 
 void DAGNode::writeNode(FILE *out) {
-    fwrite(&childmask[0], sizeof(bool), 8, out);
+    fwrite(&childmask, sizeof(uint8_t), 1, out);
     if(!isLeaf())
         fwrite(&children[0], sizeof(size_t), children.size(), out);
 }
