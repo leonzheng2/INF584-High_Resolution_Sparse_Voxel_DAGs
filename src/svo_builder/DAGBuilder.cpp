@@ -166,6 +166,7 @@ void DAGBuilder::showLevel(size_t L) const {
         DAGNode n = DAGNodes[n_id];
         n.print();
     }
+    std::cout << "There are " << DAGLevels[L].size() << " nodes at level " << L << std::endl;
 }
 
 

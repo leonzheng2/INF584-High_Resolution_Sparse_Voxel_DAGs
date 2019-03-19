@@ -25,6 +25,7 @@ public:
     std::vector<size_t> children; // Position in the next level
     std::unordered_set<size_t> parents; // Position in the previous level
     size_t id; // Vertex index in DAGNodes vector
+    uint8_t childmask; // 8bits, '1' if there is a child
 
     // Overloading
     bool operator< (const DAGNode &n) const; // Compare childmask. If identical, use lexicographic order on children
@@ -34,9 +35,6 @@ public:
     bool isLeaf() const; // Check is there are children
     void print(); // Print DAG vertex with id, childmask, children and parents
     void writeNode(FILE* out); // Write one node in file out
-
-private:
-    uint8_t childmask; // 8bits, '1' if there is a child
 };
 
 /*

@@ -47,8 +47,9 @@ bool DAGNode::isLeaf() const {
 }
 
 void DAGNode::print(){
-    string s = "DAGNode " + std::to_string(id) + " - childmask: " + std::to_string(childmask) + " (";
-    int a = childmask;
+    string s = "DAGNode " + std::to_string(id) + " - ";
+    s += "childmask: " + std::to_string(childmask) + " (";
+        int a = childmask;
     for(int j=7; j>=0; j--){
         s+= a % int(pow(2, j)) == a ? "0" : "1";
         a = a % int(pow(2, j));

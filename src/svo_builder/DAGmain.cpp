@@ -70,7 +70,7 @@ int main (int argc, char *argv[]) {
     duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
     std::cout<<"Reduce DAG: "<< duration << "s" << '\n';
 
-    dagBuilder.showLevel(3);
+//    dagBuilder.showLevel(9);
     dagBuilder.printDAG();
     dagBuilder.write_dag();
 
